@@ -4,8 +4,8 @@ const { OAuth2Client } = require("google-auth-library");
 module.exports = async (email, subject, text) => {
   // Khởi tạo OAuth2Client với Client ID và Client Secret
   const myOAuth2Client = new OAuth2Client(
-    process.env.GOOGLE_MAILER_CLIENT_ID,
-    process.env.GOOGLE_MAILER_CLIENT_SECRET
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET
   );
   // Set Refresh Token vào OAuth2Client Credentials
   myOAuth2Client.setCredentials({
@@ -19,15 +19,15 @@ module.exports = async (email, subject, text) => {
     const myAccessToken = myAccessTokenObject?.token;
 
     const transporter = nodemailer.createTransport({
-      host: process.env.HOST,
-      service: process.env.SERVICE,
-      port: Number(process.env.EMAIL_PORT),
-      secure: Boolean(process.env.SECURE),
+      host: "smtp.gmail.com",
+      service: "gmail",
+      port: 465,
+      secure: true,
       auth: {
         type: "OAuth2",
-        user: "hanquoclythu@gmail.com",
-        clientId: process.env.GOOGLE_MAILER_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_MAILER_CLIENT_SECRET,
+        user: process.env.USER,
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         refresh_token: process.env.GOOGLE_MAILER_REFRESH_TOKEN,
         accessToken: myAccessToken,
       },

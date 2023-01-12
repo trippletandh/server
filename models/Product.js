@@ -3,13 +3,16 @@ const Schema = mongoose.Schema;
 
 const productSchema = new Schema(
   {
-    name: { type: String, required: true },
+    title: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     category: { type: String, required: true },
     photos: { type: [String] },
+    size: { type: [Number] },
     colors: { type: [String] },
+    styles: { type: [String] },
     rating: { type: Number, min: 0, max: 5, default: 5 },
     price: { type: Number, required: true },
+    salePrice: { type: Number },
     inStock: { type: Number, default: 100 },
   },
   { timestamps: true }

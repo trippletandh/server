@@ -43,8 +43,12 @@ app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
 app.use("/products", productsRoutes);
 app.use("/carts", cartsRoutes);
-app.use("/orders", authRoutes);
+app.use("/orders", ordersRoutes);
 app.use("/password-reset", pwResetRoutes);
+
+app.get("/", (req, res, next) => {
+  res.send("<h1>Welcome to BirthBlessing shop API ^^</h1>");
+});
 
 app.listen(5000, () => {
   connection();

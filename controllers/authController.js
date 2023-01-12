@@ -29,7 +29,7 @@ exports.signup = async (req, res) => {
       token: crypto.randomBytes(32).toString("hex"),
     }).save();
 
-    const url = `http://localhost:5173/auth/${user.id}/verify/${token.token}`;
+    const url = `${process.env.CLIENT_URL_DEV}/auth/${user.id}/verify/${token.token}`;
     await sendEmail(
       user.email,
       "Verify Email",
@@ -91,10 +91,7 @@ exports.signin = async (req, res) => {
         .send({ message: "Invalid Email, Username or Password" });
     console.log("Login successful");
 
-    const validPassword = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
+    const validPassword = bcrypt.compare(req.body.password, user.password);
     if (!validPassword)
       return res.status(401).send({ message: "Invalid Email or Password" });
 
@@ -105,7 +102,7 @@ exports.signin = async (req, res) => {
           userId: user._id,
           token: crypto.randomBytes(32).toString("hex"),
         }).save();
-        const url = `${process.env.BASE_URL}/auth/${user._id}/verify/${token.token}`;
+        const url = `${process.env.SERVER_URL_DEV}/auth/${user._id}/verify/${token.token}`;
         await sendEmail(user.email, "Verify Email", url);
       }
 

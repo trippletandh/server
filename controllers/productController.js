@@ -1,27 +1,42 @@
 const Product = require("../models/Product");
-const ITEMS_PER_PAGE = 3;
+
+// exports.getAllProduct = async (req, res) => {
+//   const page = +req.query.page || 1;
+//   const category = req.query.category || "all";
+//   const totalItems =
+//     category === "all"
+//       ? await Product.find().countDocuments()
+//       : await Product.find({ category: category }).countDocuments();
+
+//   const products =
+//     category === "all"
+//       ? await Product.find()
+//           .skip((page - 1) * ITEMS_PER_PAGE)
+//           .limit(ITEMS_PER_PAGE)
+//       : await Product.find({ category: category })
+//           .skip((page - 1) * ITEMS_PER_PAGE)
+//           .limit(ITEMS_PER_PAGE);
+//   // const totalItems = products.length;
+//   console.log(totalItems);
+//   res.json({
+//     products: products,
+//     page: page,
+//     skip: (page - 1) * ITEMS_PER_PAGE,
+//     limit: ITEMS_PER_PAGE,
+//     total: 100,
+//     currentPage: page,
+//     hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+//     hasPreviousPage: page > 1,
+//     nextPage: page + 1,
+//     previousPage: page - 1,
+//     lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+//   });
+// };
 
 // GET all products
 exports.getAllProduct = async (req, res) => {
-  const page = +req.query.page || 1;
-  const totalItems = await Product.find().countDocuments();
-
-  const products = await Product.find({})
-    .skip((page - 1) * ITEMS_PER_PAGE)
-    .limit(ITEMS_PER_PAGE);
-  res.json({
-    products: products,
-    page: page,
-    skip: (page - 1) * ITEMS_PER_PAGE,
-    limit: ITEMS_PER_PAGE,
-    total: 100,
-    currentPage: page,
-    hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-    hasPreviousPage: page > 1,
-    nextPage: page + 1,
-    previousPage: page - 1,
-    lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
-  });
+  const products = await Product.find(req.query);
+  res.json(products);
 };
 
 // GET product by id
@@ -46,9 +61,8 @@ exports.searchProduct = async (req, res) => {
 
 // CREATE a new product
 exports.addProduct = async (req, res) => {
-  const newProduct = new Product(req.body);
-  const savedProduct = await newProduct.save();
-  res.json(savedProduct);
+  const product = await Product.create(req.body);
+  res.json(product);
 };
 
 // UPDATE a product by ID

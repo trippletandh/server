@@ -30,7 +30,7 @@ exports.sendLink = async (req, res) => {
       console.log(token);
     }
 
-    const url = `http://localhost:5173/password-reset/${user._id}/${token.token}/`;
+    const url = `${process.env.CLIENT_URL_DEV}/password-reset/${user._id}/${token.token}/`;
     await sendEmail(
       user.email,
       "Password Reset",

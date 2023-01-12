@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-
+const crypto = require("crypto");
 const {
   signin,
   signup,
   verifyEmail,
 } = require("../controllers/authController");
+const Token = require("../models/Token");
+const User = require("../models/User");
 
 // Create new user - POST
 router.post("/signup", signup);
@@ -33,15 +35,32 @@ router.get(
     failureRedirect: "/",
     session: false,
   }),
-  (req, res) => {
-    const token = req.user.generateAuthToken();
-    res.cookie("x-auth-cookie", token);
-    res.redirect("http://localhost:5173");
+  async (req, res) => {
+    console.log(req.user);
+    let token = await Token.findOne({ userId: req.user.id });
+    if (!token) {
+      token = await new Token({
+        userId: req.user.id,
+        token: crypto.randomBytes(32).toString("hex"),
+      }).save();
+    }
+
+    const user = await User.findOne({ googleId: req.user.id });
+    // const { password, ...others } = user._doc;
+    res.status(200).send({
+      user_token: token,
+      user: user,
+      message: "logged in successfully",
+    });
+
+    // const token = req.user.generateAuthToken();
+    // res.cookie("x-auth-cookie", token);
+    // res.redirect("http://localhost:5173");
   }
 );
 
 // Facebook login
-// Redirects the user to Google, where they will authenticate.
+// Redirects the user to Facebook, where they will authenticate.
 router.get(
   "/facebook",
   passport.authenticate("facebook", {
@@ -49,18 +68,35 @@ router.get(
   })
 );
 
-// Completes the authentication sequence when Google redirects the user back to the application.
+// Completes the authentication sequence when Facebook redirects the user back to the application.
 router.get(
   "/facebook/callback",
   passport.authenticate("facebook", {
     failureRedirect: "/",
     session: false,
   }),
-  (req, res) => {
+  async (req, res) => {
     console.log(req.user);
-    const token = req.user.generateAuthToken();
-    res.cookie("x-auth-cookie", token);
-    res.redirect("http://localhost:5173");
+    let token = await Token.findOne({ userId: req.user.id });
+
+    if (!token) {
+      token = await new Token({
+        userId: req.user.id,
+        token: crypto.randomBytes(32).toString("hex"),
+      }).save();
+    }
+
+    const user = await User.findOne({ facebookId: req.user.id });
+    // const { password, ...others } = user._doc;
+    res.status(200).send({
+      user_token: token,
+      user: user,
+      message: "logged in successfully",
+    });
+
+    // const token = req.user.generateAuthToken();
+    // res.cookie("x-auth-cookie", token);
+    // res.redirect("http://localhost:5173");
   }
 );
 
