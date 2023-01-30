@@ -2,13 +2,21 @@ const Order = require("../models/Order");
 
 //CREATE an order
 exports.addOrder = async (req, res) => {
-  const newOrder = new Order(req.body);
-
   try {
-    const savedOrder = await newOrder.save();
-    res.status(200).json(savedOrder);
+    const userId = req.params.userId;
+    const data = req.body.order;
+
+    const order = await Order.create({
+      userId: userId,
+      amount: data.amount,
+      address: data.address,
+      transaction_id: data.transaction_id,
+      products: data.products,
+    });
+    return res.status(201).json(order);
   } catch (err) {
-    res.status(500).json(err);
+    console.log(err);
+    res.status(500).send("Something went wrong");
   }
 };
 
@@ -41,7 +49,9 @@ exports.deleteOrder = async (req, res) => {
 //GET user orders
 exports.getOrdersByUser = async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.params.userId });
+    const orders = await Order.find({ userId: req.params.userId }).sort({
+      date: -1,
+    });
     res.status(200).json(orders);
   } catch (err) {
     res.status(500).json(err);

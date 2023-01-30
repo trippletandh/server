@@ -1,37 +1,75 @@
 const Cart = require("../models/Cart");
+const Product = require("../models/Product");
 
 //CREATE a cart
 exports.addCart = async (req, res) => {
-  const newCart = new Cart(req.body);
+  const userId = req.params.userId;
+  const { productId, quantity } = req.body;
 
   try {
-    const savedCart = await newCart.save();
-    res.status(200).json(savedCart);
+    let cart = await Cart.findOne({ userId });
+    let item = await Product.findOne({ _id: productId });
+    if (!item) {
+      res.status(404).send("Item not found!");
+    }
+    const price = item.price;
+
+    if (cart) {
+      // if cart exists for the user
+      let itemIndex = cart.products.findIndex((p) => p.productId == productId);
+
+      // Check if product exists or not
+      if (itemIndex > -1) {
+        let productItem = cart.products[itemIndex];
+        productItem.quantity += quantity;
+        cart.products[itemIndex] = productItem;
+      } else {
+        cart.products.push({ productId, quantity, price, product: item });
+      }
+      cart.subPrice += quantity * price;
+      cart = await cart.save();
+      return res.status(201).json(cart);
+    } else {
+      // no cart exists, create one
+      const newCart = await Cart.create({
+        userId,
+        products: [{ productId, quantity, price, product: item }],
+        subPrice: quantity * price,
+      });
+      return res.status(201).json(newCart);
+    }
   } catch (err) {
-    res.status(500).json(err);
+    console.log(err);
+    res.status(500).send("Something went wrong");
   }
 };
 
-//UPDATE cart by ID
-exports.updateCart = async (req, res) => {
+//DELETE cart item
+exports.deleteCartItem = async (req, res) => {
+  const userId = req.params.userId;
+  const productId = req.params.productId;
   try {
-    const updatedCart = await Cart.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-      },
-      { new: true }
-    );
-    res.status(200).json(updatedCart);
+    let cart = await Cart.findOne({ userId });
+    let itemIndex = myIndexOf(cart.products, productId);
+
+    if (itemIndex > -1) {
+      let productItem = cart.products[itemIndex];
+      cart.subPrice -= productItem.quantity * productItem.price;
+      cart.products.splice(itemIndex, 1);
+    }
+    updatedCart = await cart.save();
+    return res.status(201).json(updatedCart);
   } catch (err) {
-    res.status(500).json(err);
+    console.log(err);
+    res.status(500).send("Something went wrong");
   }
 };
 
-//DELETE cart by ID
 exports.deleteCart = async (req, res) => {
   try {
-    await Cart.findByIdAndDelete(req.params.id);
+    const userId = req.params.userId;
+    let cart = await Cart.findOne({ userId });
+    await Cart.findByIdAndDelete({ _id: cart._id });
     res.status(200).json("Cart has been deleted...");
   } catch (err) {
     res.status(500).json(err);
@@ -48,12 +86,37 @@ exports.getCartByUser = async (req, res) => {
   }
 };
 
-//GET ALL carts
-exports.getAllCart = async (req, res) => {
+// Update cart item
+exports.updateCartItem = async (req, res) => {
+  const userId = req.params.userId;
+  const productId = req.params.productId;
+  const { quantity } = req.body;
+
   try {
-    const carts = await Cart.find();
-    res.status(200).json(carts);
+    let cart = await Cart.findOne({ userId });
+    let itemIndex = myIndexOf(cart.products, productId);
+    if (itemIndex > -1) {
+      let productItem = cart.products[itemIndex];
+      cart.subPrice -= productItem.quantity * productItem.price;
+      productItem.quantity = quantity;
+      cart.subPrice += productItem.quantity * productItem.price;
+    }
+    updatedCart = await cart.save();
+    return res.status(201).json(updatedCart);
   } catch (err) {
-    res.status(500).json(err);
+    console.log(err);
+    res.status(500).send("Something went wrong");
   }
 };
+
+function myIndexOf(collection, target) {
+  for (var val = 0; val < collection.length; val++) {
+    if (
+      collection[val]._id.toString().replace(/ObjectId\("(.*)"\)/, "$1") ===
+      target
+    ) {
+      return val;
+    }
+  }
+  return -1;
+}

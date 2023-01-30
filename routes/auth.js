@@ -37,25 +37,11 @@ router.get(
   }),
   async (req, res) => {
     console.log(req.user);
-    let token = await Token.findOne({ userId: req.user.id });
-    if (!token) {
-      token = await new Token({
-        userId: req.user.id,
-        token: crypto.randomBytes(32).toString("hex"),
-      }).save();
-    }
 
-    const user = await User.findOne({ googleId: req.user.id });
-    // const { password, ...others } = user._doc;
-    res.status(200).send({
-      user_token: token,
-      user: user,
-      message: "logged in successfully",
-    });
-
-    // const token = req.user.generateAuthToken();
-    // res.cookie("x-auth-cookie", token);
-    // res.redirect("http://localhost:5173");
+    const token = req.user.generateAuthToken();
+    const { password, ...others } = req.user;
+    res.cookie("access_token", { token: token, user: others });
+    res.redirect("http://localhost:5173");
   }
 );
 
@@ -77,26 +63,11 @@ router.get(
   }),
   async (req, res) => {
     console.log(req.user);
-    let token = await Token.findOne({ userId: req.user.id });
 
-    if (!token) {
-      token = await new Token({
-        userId: req.user.id,
-        token: crypto.randomBytes(32).toString("hex"),
-      }).save();
-    }
-
-    const user = await User.findOne({ facebookId: req.user.id });
-    // const { password, ...others } = user._doc;
-    res.status(200).send({
-      user_token: token,
-      user: user,
-      message: "logged in successfully",
-    });
-
-    // const token = req.user.generateAuthToken();
-    // res.cookie("x-auth-cookie", token);
-    // res.redirect("http://localhost:5173");
+    const token = req.user.generateAuthToken();
+    const { password, ...others } = req.user;
+    res.cookie("access_token", { token: token, user: others });
+    res.redirect("http://localhost:5173");
   }
 );
 

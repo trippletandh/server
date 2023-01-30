@@ -3,17 +3,30 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
   {
-    userId: { type: String, required: true, unique: true },
+    transaction_id: { type: String, unique: true },
+    userId: { type: String },
     products: [
       {
         productId: { type: String },
-        quantity: { type: Number, default: 1 },
+        name: { type: String },
+        quantity: { type: Number },
+        price: { type: Number },
       },
     ],
-    totalPrice: { type: Number, required: true, default: 0 },
-    address: { type: Object, required: true },
-    paymentMethod: { type: String, required: true, default: "COD" },
-    status: { type: String, default: "pending" },
+    amount: { type: Number, default: 0 },
+    address: { type: String },
+    paymentMethod: { type: String },
+    status: {
+      type: String,
+      default: "Not processed",
+      enum: [
+        "Not processed",
+        "Processing",
+        "Shipped",
+        "Delivered",
+        "Cancelled",
+      ], // enum means string objects
+    },
   },
   { timestamps: true }
 );

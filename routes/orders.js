@@ -8,20 +8,17 @@ const {
   getIncome,
 } = require("../controllers/orderController");
 
-//CREATE an order
-router.post("/", addOrder);
-
-//UPDATE an order by ID
-router.put("/:id", updateOrder);
-
-//DELETE an order by ID
-router.delete("/:id", deleteOrder);
-
-//GET user orders
-router.get("/find/:userId", getOrdersByUser);
-
 //GET ALL orders
 router.get("/", getAllOrders);
+
+//CREATE an order
+router.post("/:userId", addOrder);
+
+//DELETE an order by ID
+router.delete("/:userId", deleteOrder);
+
+//GET user orders
+router.get("/:userId", getOrdersByUser);
 
 // GET monthly income
 router.get("/income", getIncome);

@@ -4,10 +4,10 @@ const jwt = require("jsonwebtoken");
 
 const userSchema = new Schema(
   {
-    name: { type: String },
-    email: { type: String, unique: true },
-    password: { type: String },
-    username: { type: String, unique: true },
+    name: { type: String, required: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String, required: true },
+    username: { type: String, unique: true, required: true },
     phoneNumber: { type: Number },
     facebookId: { type: String },
     googleId: { type: String },
@@ -28,6 +28,19 @@ userSchema.methods.generateAuthToken = () => {
     expiresIn: "7d",
   });
   return token;
+};
+
+userSchema.methods.toJSON = () => {
+  return {
+    id: this._id,
+    provider: this.provider,
+    email: this.email,
+    username: this.username,
+    image: this.image,
+    name: this.name,
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt,
+  };
 };
 
 module.exports = mongoose.model("User", userSchema);
