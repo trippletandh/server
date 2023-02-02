@@ -14,6 +14,8 @@ const cartsRoutes = require("./routes/cart");
 const ordersRoutes = require("./routes/orders");
 const pwResetRoutes = require("./routes/pwReset");
 const paymentRoutes = require("./routes/payment");
+const adminRoutes = require("./routes/admin");
+const reviewRoutes = require("./routes/reviews");
 
 const app = express();
 dotenv.config();
@@ -48,6 +50,8 @@ app.use("/cart", cartsRoutes);
 app.use("/orders", ordersRoutes);
 app.use("/password-reset", pwResetRoutes);
 app.use("/braintree", paymentRoutes);
+app.use("/admin", adminRoutes);
+app.use("/reviews", reviewRoutes);
 
 app.get("/", (req, res, next) => {
   res.send("<h1>Welcome to BirthBlessing shop API ^^</h1>");

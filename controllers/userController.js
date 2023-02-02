@@ -103,3 +103,18 @@ exports.updateProfile = async (req, res) => {
     console.log(err);
   }
 };
+
+// dummy user
+exports.addUser = async (req, res) => {
+  const user = await User.create({
+    name: "Anonymous ",
+    email: "anonymous@gmail.com",
+    password: "$2b$10$mcTEB55z3tiAl3HBT69rG.o9XiR2GiMZ./ArKQl3GqIgN.KAh1R.a",
+    username: "anonymous",
+    isAdmin: false,
+    verified: true,
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk6qKlLk50SrpDFulviyCpf0E2AcU9ncWXpA&usqp=CAU",
+  });
+  res.json(user);
+};

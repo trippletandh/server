@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const orderSchema = new Schema(
   {
     transaction_id: { type: String, unique: true },
-    userId: { type: String },
+    userId: { type: String, required: true },
     products: [
       {
         productId: { type: String },
@@ -25,7 +25,7 @@ const orderSchema = new Schema(
         "Shipped",
         "Delivered",
         "Cancelled",
-      ], // enum means string objects
+      ],
     },
   },
   { timestamps: true }

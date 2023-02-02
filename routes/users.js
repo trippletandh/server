@@ -3,12 +3,8 @@ const {
   updateUser,
   deleteUser,
   getUserById,
-  getAllUsers,
   getUserStats,
 } = require("../controllers/userController");
-
-//GET ALL USER
-router.get("/", getAllUsers);
 
 //GET USER by ID
 router.get("/find/:id", getUserById);

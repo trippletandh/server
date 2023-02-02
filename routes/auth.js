@@ -1,14 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const crypto = require("crypto");
 const {
   signin,
   signup,
   verifyEmail,
 } = require("../controllers/authController");
-const Token = require("../models/Token");
-const User = require("../models/User");
 
 // Create new user - POST
 router.post("/signup", signup);

@@ -1,4 +1,3 @@
-const { verifyToken } = require("../utility/verifyToken");
 const router = require("express").Router();
 const {
   getAllReviews,
@@ -10,12 +9,12 @@ const {
 
 router.get("/", getAllReviews);
 
-router.get("/:id", getReviewById);
+router.get("/:productId", getReviewById);
 
-router.post("/", verifyToken, addReview);
+router.post("/", addReview);
 
-router.delete("/:id", verifyToken, deleteReview);
+router.delete("/:productId", deleteReview);
 
-router.put("/:id", verifyToken, editReview);
+router.put("/:productId", editReview);
 
-export default router;
+module.exports = router;

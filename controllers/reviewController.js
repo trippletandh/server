@@ -16,28 +16,22 @@ exports.getAllReviews = async (req, res) => {
   }
 };
 
+// Get all reviews at one product
 exports.getReviewById = async (req, res) => {
   try {
-    const review = await Review.findById(req.params.id).populate("user");
+    const review = await Review.findById(req.params.productId);
     if (!review) return res.status(404).json({ message: "No message found." });
-    res.json({ message: message.toJSON() });
+    res.json(review);
   } catch (err) {
     res.status(500).json({ message: "Something went wrong." });
   }
 };
 
+// Add review to a product
 exports.addReview = async (req, res) => {
-  const { error } = validateMessage(req.body);
-  if (error) return res.status(400).json({ message: error.details[0].message });
-
   try {
-    let review = await Review.create({
-      text: req.body.text,
-      user: req.user.id,
-    });
-    review = await review.populate("user").execPopulate();
-
-    res.status(200).json({ message: message.toJSON() });
+    let review = await Review.create(req.body);
+    res.status(200).json(review);
   } catch (err) {
     res.status(500).json({ message: "Something went wrong." });
   }

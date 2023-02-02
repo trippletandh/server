@@ -65,16 +65,34 @@ exports.deleteCartItem = async (req, res) => {
   }
 };
 
+// Delete all items in the cart
 exports.deleteCart = async (req, res) => {
+  const userId = req.params.userId;
   try {
-    const userId = req.params.userId;
     let cart = await Cart.findOne({ userId });
-    await Cart.findByIdAndDelete({ _id: cart._id });
-    res.status(200).json("Cart has been deleted...");
+    let length = cart.products.length;
+
+    cart.subPrice = 0;
+    cart.products.splice(0, length);
+    updatedCart = await cart.save();
+    return res.status(201).json(updatedCart);
   } catch (err) {
-    res.status(500).json(err);
+    console.log(err);
+    res.status(500).send("Something went wrong");
   }
 };
+
+// Delete user cart
+// exports.deleteCart = async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+//     let cart = await Cart.findOne({ userId });
+//     await Cart.findByIdAndDelete({ _id: cart._id });
+//     res.status(200).json("Cart has been deleted...");
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// };
 
 //GET user cart
 exports.getCartByUser = async (req, res) => {
@@ -110,13 +128,16 @@ exports.updateCartItem = async (req, res) => {
 };
 
 function myIndexOf(collection, target) {
-  for (var val = 0; val < collection.length; val++) {
-    if (
-      collection[val]._id.toString().replace(/ObjectId\("(.*)"\)/, "$1") ===
-      target
-    ) {
-      return val;
+  if (!collection) return -1;
+  else {
+    for (var val = 0; val < collection.length; val++) {
+      if (
+        collection[val]._id.toString().replace(/ObjectId\("(.*)"\)/, "$1") ===
+        target
+      ) {
+        return val;
+      }
     }
   }
-  return -1;
+  // return -1;
 }

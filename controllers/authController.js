@@ -25,7 +25,7 @@ exports.signup = async (req, res) => {
 
     const token = await new Token({
       userId: user._id,
-      token: User.generateToken(),
+      token: user.generateAuthToken(),
       // token: crypto.randomBytes(32).toString("hex"),
     }).save();
 
