@@ -10,7 +10,7 @@ const productSchema = new Schema(
     size: { type: [Number] },
     colors: { type: [String] },
     styles: { type: [String] },
-    rating: { type: Number, min: 1, max: 5, default: 5, ref: "Review" },
+    rating: { type: Number, min: 0, max: 5, default: 0, ref: "Review" },
     price: { type: Number, required: true },
     salePrice: { type: Number },
     sold: { type: Number, default: 0 },

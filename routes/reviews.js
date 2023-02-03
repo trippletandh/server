@@ -7,14 +7,13 @@ const {
   editReview,
 } = require("../controllers/reviewController");
 
-router.get("/", getAllReviews);
+// router.get("/", getAllReviews);
+router.post("/", addReview);
 
 router.get("/:productId", getReviewById);
 
-router.post("/", addReview);
+router.delete("/:productId/:reviewId", deleteReview);
 
-router.delete("/:productId", deleteReview);
-
-router.put("/:productId", editReview);
+router.put("/:productId/:reviewId", editReview);
 
 module.exports = router;
